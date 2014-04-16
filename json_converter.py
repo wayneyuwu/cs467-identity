@@ -1,5 +1,6 @@
 import json
 import time
+from random import randint
 
 fjson = open('data.json', 'r')
 raw_json = json.loads(fjson.readline())
@@ -10,6 +11,11 @@ for h in raw_json['WebHistoryDates']:
     try:
         entry = {}
         entry['title'] = h['title']
+
+        if all(ord(c) < 128 for c in h['title']):
+            entry['country'] = 1
+        else:
+            entry['country'] = 0
 
         url = h['']        
         entry['url'] = url
@@ -30,11 +36,13 @@ for h in raw_json['WebHistoryDates']:
         time_dict['sec'] = struct_time.tm_sec
         
         entry['time'] = time_dict
-        entry['category'] = 0
+        entry['category'] = randint(0, 5)
+
         formatted_data.append(entry)
     except:
         continue
 
+formatted_data.reverse()
 clean_data = 'var data = ' + json.dumps(formatted_data)
 fout = open('clean_data.json', 'w')
 fout.write(clean_data)
